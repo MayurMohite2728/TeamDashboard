@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Weekly Task Utilization</title>
+  <style>
+    body { font-family: Arial; margin: 20px; }
+    table, th, td { border: 1px solid #999; border-collapse: collapse; padding: 8px; }
+    th { background-color: #f0f0f0; }
+  </style>
+</head>
+<body>
+
+<h2>Weekly Task Utilization (Based on Actual Working Days)</h2>
+<p><strong>Week: May 25 – May 31, 2025</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Task</th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Estimated Hours</th>
+      <th>Total Working Days</th>
+      <th>Working Days in Week</th>
+      <th>Effort This Week (hrs)</th>
+    </tr>
+  </thead>
+  <tbody id="taskTable"></tbody>
+</table>
+
+<h3>Summary</h3>
+<p>Total Tasks Counted: <span id="taskCount">0</span></p>
+<p>Total Weekly Effort: <span id="totalEffort">0</span> hrs</p>
+<p>Average Effort Per Task: <span id="avgEffort">0</span> hrs</p>
+<p><strong>Utilization: <span id="utilization">0</span>%</strong></p>
+
+<script>
+  
+
+  const tasks = [
+    { name: "Task1", start: "2025-05-28", end: "2025-06-06", estimatedHours: 40 },
+    { name: "Task2", start: "2025-05-25", end: "2025-05-31", estimatedHours: 8 },
+    { name: "Task3", start: "2025-05-25", end: "2025-05-26", estimatedHours: 4 },
+    { name: "Task4", start: "2025-05-26", end: "2025-05-27", estimatedHours: 8 },
+    { name: "Task5", start: "2025-05-23", end: "2025-05-27", estimatedHours: 2 },
+  ];
+  
+
+  const WEEK_START = new Date('2025-05-25');
+  const WEEK_END = new Date('2025-05-31');
+  const WEEKLY_HOURS = 40;
+
+  
+  function getWorkingDays(start, end) {
+    let count = 0;
+    const current = new Date(start);
+    while (current <= end) {
+      const day = current.getDay();
+      if (day !== 0 && day !== 6) count++; // Weekdays only
+      current.setDate(current.getDate() + 1);
+    }
+    return count;
+  }
+
+  let totalEffort = 0;
+  let taskCount = 0;
+  const table = document.getElementById("taskTable");
+
+  tasks.forEach(task => {
+    const startDate = new Date(task.start);
+    const endDate = new Date(task.end);
+
+    if (startDate <= WEEK_END && endDate >= WEEK_START) {
+      const totalWorkingDays = getWorkingDays(startDate, endDate);
+      const overlapStart = new Date(Math.max(startDate, WEEK_START));
+      const overlapEnd = new Date(Math.min(endDate, WEEK_END));
+      const workingDaysInWeek = getWorkingDays(overlapStart, overlapEnd);
+
+      const effortThisWeek = ((task.estimatedHours / totalWorkingDays) * workingDaysInWeek).toFixed(2);
+
+      totalEffort += parseFloat(effortThisWeek);
+      taskCount++;
+
+      const row = table.insertRow();
+      row.innerHTML = `
+        <td>${task.name}</td>
+        <td>${task.start}</td>
+        <td>${task.end}</td>
+        <td>${task.estimatedHours}</td>
+        <td>${totalWorkingDays}</td>
+        <td>${workingDaysInWeek}</td>
+        <td>${effortThisWeek}</td>
+      `;
+    }
+  });
+
+  const avgEffort = taskCount > 0 ? totalEffort / taskCount : 0;
+  const utilization = ((totalEffort / WEEKLY_HOURS) * 100).toFixed(2);
+
+  document.getElementById("taskCount").innerText = taskCount;
+  document.getElementById("totalEffort").innerText = totalEffort.toFixed(2);
+  //document.getElementById("avgEffort").innerText = avgEffort.toFixed(2);
+  document.getElementById("utilization").innerText = utilization;
+</script>
+
+</body>
+</html>

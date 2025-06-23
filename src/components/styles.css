@@ -1,0 +1,648 @@
+/* UtilizationGrid.css */
+
+/* Container scroll */
+.util-grid {
+  width: 100%;   
+    margin: 0 auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 15px;
+    box-sizing: border-box;
+    color: #333;
+    background-color: #fff;
+}
+
+/* Header styles */
+.grid-header {
+  background: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
+}
+
+/* Header row flex */
+.header-row {
+  display: flex;
+  align-items: center;
+  min-width: 600px; /* minimum width for horizontal scroll */
+}
+.week-filter {
+   display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    gap: 12px;
+}
+button.navbtn {
+    display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background-color: #f8f8f8;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  gap: 6px; /* spacing between icon and text */
+  transition: background-color 0.2s;
+  margin: 5px 7px;
+}
+button.pagbtn {
+    display: flex
+;
+    align-items: center;
+    gap: 2px;
+    font-size: 12px;
+    padding: 7px 8px;
+    border-radius: 10px;
+    margin-left: 5px;
+    font-weight: 700;
+    font-size: 14px;
+    border: transparent;
+    background-color: #277590;
+    color: #fff;
+}
+/* Team members header cell */
+.employee-cell {
+  width: 300px;
+  min-width: 140px;
+  padding: 10px 12px;
+  font-weight: 700;
+  border: 1px solid #fcf9f9;
+  background: #f8f9fa;
+  flex-shrink: 0;
+  white-space: nowrap;
+  box-sizing: border-box;
+  color: #222;
+  user-select: none;
+  height:60px;
+
+
+}
+
+.employee-cell.teamname {
+ background-color: #f8f9fa;
+    color: #150808;
+    border: none;
+    font-weight: 500;
+    display: flex;
+}
+
+/* Months header container */
+/* Each month header */
+.month-header,
+.month-cell {
+  min-width: 90px;
+  flex-shrink: 0;
+  height: 60px;
+  line-height: 60px;
+  font-weight: 600;
+border: 1px solid #fcf9f9;
+  text-align: center;
+  box-sizing: border-box;
+  white-space: nowrap;
+  user-select: none;
+  background: #405161;
+   
+    border-bottom: 0px;
+    color: #fff;
+    flex: 1 0 120px;
+    padding: 0px 8px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.85rem;
+    border-left: 1px solid #e0e0e0;
+    -webkit-user-select: none;
+    user-select: none;
+  
+}
+.month-header {
+    border: 1px solid grey;
+}
+/* Body styles */
+.grid-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 600px;
+}
+
+/* Each row */
+.row {
+  display: flex;
+  align-items: center;
+  min-width: 600px;
+  border-bottom: 1px solid #eee;
+}
+
+/* Employee name cell */
+.employee-cell {
+  background: #f8f9fa;
+
+}
+.employee-cell.teammember { 
+    font-weight: 700;
+    padding: 12px 16px;   
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 15px 20px 15px 20px;
+    background: #405161;
+    border: 1px solid #5a6b7d;
+    border-bottom: 0px;
+    color: #fff;
+}
+
+/* Each cell for a month */
+.month-cell {
+  min-width: 90px;
+  height: 60px;
+  padding: 6px 4px;
+  box-sizing: border-box;
+  
+  color: #000;
+  font-weight: 600;
+  font-size: 13px;
+  text-align: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  user-select: none; 
+   /* mayur */
+
+}
+
+/* Project percent inside cell */
+.project-percent {
+  line-height: 1;
+}
+
+/* Scrollbar style for webkit */
+.util-grid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.util-grid::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.util-grid::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.util-grid::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+.employee-cell.teamname button.expand-btn {
+    margin-right: 10px;
+}
+
+/* Responsive tweaks */
+
+/* Medium devices (tablets) */
+@media (max-width: 992px) {
+  .employee-cell {
+    width: 140px;
+    min-width: 120px;
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+
+  .month-header,
+  .month-cell {
+    min-width: 90px;
+    font-size: 11px;
+    height: 50px;
+    line-height: 50px;
+  }
+
+  .grid-body,
+  .header-row {
+    min-width: 500px;
+  }
+}
+
+/* Small devices (phones) */
+@media (max-width: 600px) {
+  .employee-cell {
+    width: 120px;
+    min-width: 100px;
+    font-size: 12px;
+    padding: 6px 8px;
+  }
+
+  .month-header,
+  .month-cell {
+    min-width: 70px;
+    font-size: 10px;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 2px;
+  }
+
+  .grid-body,
+  .header-row {
+    min-width: 420px;
+  }
+}
+
+/* Extra small devices (very small phones) */
+@media (max-width: 400px) {
+  .employee-cell {
+    width: 100px;
+    min-width: 80px;
+    font-size: 10px;
+    padding: 4px 6px;
+  }
+
+  .month-header,
+  .month-cell {
+    min-width: 60px;
+    font-size: 9px;
+    height: 35px;
+    line-height: 35px;
+  }
+
+  .grid-body,
+  .header-row {
+    min-width: 360px;
+  }
+}
+
+
+/* mayur */
+/* Collapsible child rows */
+.child-row {
+  display: flex;
+  align-items: center;
+  min-width: 600px;
+  border-bottom: 1px solid #eee;
+  transition: all 0.3s ease;
+}
+
+.child-row.hidden {
+  display: none;
+}
+
+/* Indentation for child rows */
+.child-row .employee-cell {
+  padding-left: 30px;
+  font-weight: 400;
+  background: #fefefe;
+}
+
+.expand-btn {
+  cursor: pointer;
+    font-size: 1.2rem;
+    border: none;
+    background: transparent;
+    color: #0a738e;
+    font-weight: 700;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    -webkit-user-select: none;
+    user-select: none;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+  cursor: pointer;
+  background: none;
+  border: none;   
+  background-color: #277590;
+    color: #fff;
+    font-size: 18px;
+    border-radius: 15px;
+    font-weight: 700;
+}
+small {
+  padding-left:30px;
+}
+
+.expand-btn:hover {
+  color: #007bff;
+}
+
+.effort-text {
+  font-size: 0.75rem;
+  color: #00796b;
+  display: block;
+  text-align: center;
+}
+
+.pagination-controls {
+ margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    align-items: center;
+    font-weight: 600;
+    color: #444;
+}
+.nav-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f8f8f8;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  gap: 6px; /* spacing between icon and text */
+  transition: background-color 0.2s;
+}
+
+.nav-btn:hover {
+  background-color: #e6e6e6;
+}
+
+.nav-icon {
+  color: #0a738e;
+  font-size: 14px;
+}
+span.legend-item {
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    padding: 7px 8px;
+    border-radius: 3px;
+    margin-left: 10px;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+/* App.css */
+
+.app-container {
+  padding: 10px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.dashboard-title {
+  font-size: 1.5rem;
+    margin-bottom: 0px;
+    text-align: center;
+    margin-top: 5PX;
+}
+
+.grid-wrapper {
+  overflow-x: auto;
+  width: 100%;
+  border-radius: 4px;
+}
+
+/* Optional: make UtilizationGrid columns responsive */
+.utilization-grid {
+  display: flex;
+  flex-direction: column;
+}
+
+.grid-header, .grid-row {
+  display: flex;
+  min-width: 600px; /* or more depending on your column count */
+}
+
+/* For smaller screens */
+@media (max-width: 768px) {
+  .dashboard-title {
+    font-size: 1.2rem;
+  }
+
+  .grid-header, .grid-row {
+    min-width: 100%;
+  }
+}
+
+
+
+
+/* Container for the entire grid */
+
+
+/* Week navigation and legend */
+
+
+.navbtn {
+  cursor: pointer;
+  padding: 8px 14px;
+  background-color: #0a738e;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.navbtn:hover {
+  background-color: #065a6e;
+}
+.navbtn:hover span {
+    color: #fff;
+}
+.navbtn:hover svg {
+    fill: #fff;
+}
+.legend {
+  display: flex;
+  gap: 10px;
+  font-size: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  padding: 4px 10px;
+  border-radius: 4px;
+  color: #000;
+  font-weight: 600;
+  user-select: none;
+}
+button.navbtn span {
+  color: #000;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+}
+/* Grid header and body have horizontal scroll on smaller widths */
+.grid-header,
+.grid-body {
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  border: transparent;
+  border-radius: 6px;
+  background-color: #fafafa;
+}
+
+/* Header row and each user row */
+.header-row,
+.row {
+  display: flex;
+  min-width: 1000px; /* enough width for columns */
+  flex-wrap: nowrap;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Last row border fix */
+.grid-body .row:last-child {
+  border-bottom: none;
+}
+
+/* Team member cell (first column) */
+
+
+/* Team name cell in task rows */
+.employee-cell.teamname.task-cell {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: #222;
+   font-style: italic;
+  background-color: #eaf6f8;
+}
+.employee-cell.teamname.task-cell small {
+    padding-left: 0px !important;
+    font-size: 14px;
+    /* margin: 0px; */
+}
+
+/* Expand/collapse button */
+
+
+/* Month headers and day cells */
+
+
+/* Color-coded utilization cells */
+.month-cell {
+  position: relative;
+  min-height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+/* Utilization percent text */
+.project-percent {
+  font-weight: 600;
+  color: #222;
+  user-select: none;
+}
+
+/* Task cells with effort hours */
+.task-cell {
+  font-size: 0.8rem;
+  color: #005f73;
+  background-color: #e0f7fa;
+  border-left: 1px solid #b2dfdb;
+  min-height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  user-select: none;
+}
+
+/* Effort text inside task cell */
+.effort-text {
+  font-size: 0.85rem;
+  color: #007c91;
+  font-weight: 600;
+}
+
+/* Pagination controls below grid */
+.pagination-controls {
+  margin-top: 15px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  align-items: center;
+  font-weight: 600;
+  color: #444;
+}
+
+/* Pagination buttons */
+.pagbtn {
+  cursor: pointer;
+  padding: 8px 14px;
+  background-color: #0a738e;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.pagbtn:hover:not(:disabled) {
+  background-color: #065a6e;
+}
+
+.pagbtn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .util-grid {
+    padding: 10px;
+  }
+
+  .employee-cell.teammember {
+    flex: 0 0 160px;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+
+  .month-header,
+  .month-cell {
+    flex: 1 0 100px;
+    font-size: 0.8rem;
+    padding: 10px 6px;
+  }
+
+  .task-cell {
+    font-size: 0.75rem;
+    min-height: 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  .employee-cell.teammember {
+    flex: 0 0 140px;
+    padding: 8px 10px;
+    font-size: 0.85rem;
+  }
+
+  .month-header,
+  .month-cell {
+    flex: 1 0 80px;
+    font-size: 0.75rem;
+    padding: 8px 4px;
+  }
+
+  .task-cell {
+    font-size: 0.7rem;
+    min-height: 26px;
+  }
+
+  .expand-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 1rem;
+  }
+
+  .week-filter {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}

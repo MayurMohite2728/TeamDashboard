@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { getUsersList } from '../Services/userService';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight,FaCalendarDay } from 'react-icons/fa';
 import './styles.css';
 
 const UtilizationGrid = () => {
@@ -24,7 +24,7 @@ const UtilizationGrid = () => {
     startOfWeek.setHours(0, 0, 0, 0);
 
     const weeks = [];
-    for (let i = -6; i <= 6; i++) {
+    for (let i = -3; i <= 6; i++) {
       const weekStart = new Date(startOfWeek);
       weekStart.setDate(startOfWeek.getDate() + i * 7);
       const options = { month: 'short', day: 'numeric' };
@@ -75,11 +75,17 @@ const UtilizationGrid = () => {
     const isExpanding = expandedUserId !== user.id;
     setExpandedUserId(isExpanding ? user.id : null);
 
+
+
     if (isExpanding && !tasksByUser[user.id]) {
       const tasks = await fetchTasksForUser(user.id);
       setTasksByUser(prev => ({ ...prev, [user.id]: tasks }));
     }
-  };
+  };  
+
+
+   
+
 
   const getCellColor = (percent) => {
     if (percent >= 100) return '#4caf5073';
@@ -250,7 +256,12 @@ const calculateUtilization = (userId, day) => {
   return (
     <div className="util-grid">
       <div className="week-filter">
-        <button className="navbtn" onClick={() => handleWeekNavigation(-1)}><FaChevronLeft className="nav-icon" style={{ marginRight: 6, color: '#0a738e' }} /> <span>Previous Weeks</span></button>
+        <button className="navbtn" onClick={() => handleWeekNavigation(-1)}><FaChevronLeft className="nav-icon" style={{ marginRight: 6, color: '#0a738e' }} /> <span>Previous Weeks</span></button> 
+
+          <button className="navbtn" onClick={() => setSelectedStartDate(new Date())}>
+  <FaCalendarDay className="nav-icon" style={{ marginRight: 6, color: '#0a738e' }} /> 
+  <span>Current Week</span>
+</button>
             
         <button className="navbtn" onClick={() => handleWeekNavigation(1)}><span>Next Weeks</span> <FaChevronRight style={{ marginRight: 6, color: '#0a738e' }} /></button>
         <div className="legend">
@@ -325,9 +336,14 @@ const calculateUtilization = (userId, day) => {
               </div>
 
               {isExpanded && taskRows.map(({ task, taskWeeks }) => (
-                <div className="row task-row" key={task.id}>
-                  <div className="employee-cell teamname task-cell">
-                    <small>{task.subject}</small>
+
+                
+                <div className="row task-row" key={task.id}> 
+                     
+                    
+                  <div className="employee-cell teamname task-cell"> 
+                
+                    <small>{task?.subject || 'No task assigned'}</small>
                   </div>
                   {days.map((day, idx) => {
                     const [month, date] = day.split(' ');
@@ -349,7 +365,8 @@ const calculateUtilization = (userId, day) => {
                            &nbsp;--
                          </div>
                           )                 ;
-                        }
+                        }  
+                        
                       return (
                       <div
                         key={idx}

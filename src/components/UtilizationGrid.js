@@ -336,7 +336,21 @@ const calculateUtilization = (userId, day) => {
                     weekEnd.setDate(weekStart.getDate() + 6);
 
                     const effort = calculateEffortThisWeek(task, weekStart, weekEnd);
-                    return (
+
+                    const utilization= calculateUtilization(user.id, day);
+                      
+                    if (utilization === 'LEAVE') {
+                             return (
+                       <div
+                         key={idx}
+                         className="month-cell"
+                         style={{ backgroundColor: '#rgb(123 102 102 / 41%)', color: '#fff', fontWeight: 600 }}
+                       >
+                           &nbsp;--
+                         </div>
+                          )                 ;
+                        }
+                      return (
                       <div
                         key={idx}
                         className="month-cell task-cell"

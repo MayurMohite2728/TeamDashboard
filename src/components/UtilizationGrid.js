@@ -152,14 +152,72 @@ const UtilizationGrid = () => {
     return weekMap;
   };
 
-  const calculateUtilization = (userId, day) => {
-    const tasks = tasksByUser[userId] || [];
-    const weekMap = mapTasksToWeeks(tasks);
-    const count = weekMap[day]?.length || 0;
-    const percent = Math.min((count / 5) * 100, 100);
-    return Math.round(percent);
-  };
-   
+  // const calculateUtilization = (userId, day) => {
+  //   const tasks = tasksByUser[userId] || [];
+  //   const weekMap = mapTasksToWeeks(tasks);
+  //   const count = weekMap[day]?.length || 0;
+  //   const percent = Math.min((count / 3) * 100);
+  //   return Math.round(percent);
+  // };
+     
+const isOnLeaveForWeek = (tasks, weekStart, weekEnd) => {
+  return tasks.some(
+    t =>
+      t._links.type?.title === 'Annual Leave' &&               // the leave task
+      new Date(t.startDate || t.start) <= weekEnd &&    // overlaps the week
+      new Date(t.dueDate  || t.end)   >= weekStart
+  );
+};
+
+
+// const WEEKLY_CAPACITY_HOURS = 40;
+
+// const calculateUtilization = (userId, day) => {
+//   const tasks = tasksByUser[userId] || [];
+//   const [month, date] = day.split(' ');
+//   const weekStart = new Date(`${month} ${date}, ${new Date().getFullYear()}`);
+//   const weekEnd = new Date(weekStart);
+//   weekEnd.setDate(weekStart.getDate() + 6);
+
+//   let totalEffort = 0;
+//   tasks.forEach(task => {
+//     totalEffort += calculateEffortThisWeek(task, weekStart, weekEnd);
+//   });
+
+//   const percent = Math.min((totalEffort / WEEKLY_CAPACITY_HOURS) * 100, 100);
+//   return Math.round(percent);
+// };   
+
+
+
+const WEEKLY_CAPACITY_HOURS = 40;  // or whatever you prefer
+
+const calculateUtilization = (userId, day) => {
+  const tasks = tasksByUser[userId] || [];
+
+  const [month, date] = day.split(' ');
+  const weekStart = new Date(`${month} ${date}, ${new Date().getFullYear()}`);
+  const weekEnd   = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 6);
+
+  // ⬇️ NEW — leave check
+  if (isOnLeaveForWeek(tasks, weekStart, weekEnd)) return 'LEAVE';
+
+  let totalEffort = 0;
+  tasks.forEach(task => {
+    totalEffort += calculateEffortThisWeek(task, weekStart, weekEnd);
+  });
+
+  return Math.round(Math.min((totalEffort / WEEKLY_CAPACITY_HOURS) * 100, 100));
+};
+
+
+
+// leave functionality
+
+// utils – place near the other helpers
+
+
 
 
   //pagination 
@@ -236,7 +294,23 @@ const UtilizationGrid = () => {
                   </button>
                   {user.name}
                 </div>
-                {days.map((day, idx) => {
+                {days.map((day, idx) => { 
+
+
+                  const utilization = calculateUtilization(user.id, day);
+
+                    if (utilization === 'LEAVE') {
+                      return (
+                        <div
+                          key={idx}
+                          className="month-cell"
+                          style={{ backgroundColor: '#ff6b6b', color: '#fff', fontWeight: 600 }}
+                        >
+                          On&nbsp;Leave
+                        </div>
+                      );
+                    }
+
                   const percent = calculateUtilization(user.id, day);
                   return (
                     <div

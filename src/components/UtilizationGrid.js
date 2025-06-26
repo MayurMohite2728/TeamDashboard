@@ -34,6 +34,7 @@ const UtilizationGrid = () => {
   };
 
   useEffect(() => {
+    
     getUsersList()
       .then(setUsers)
       .catch(err => console.error('Error loading users:', err));
@@ -343,7 +344,45 @@ const calculateUtilization = (userId, day) => {
                     
                   <div className="employee-cell teamname task-cell"> 
                 
-                    <small>{task?.subject || 'No task assigned'}</small>
+                   {/* <small>
+                       <a href='http://164.68.99.129/projects/opentext-document-management-system-dms-implementation/work_packages' > Project - {task?._links?.project?.title }</a><br />
+                                
+                                
+                                
+                        Task - {task?.subject}
+                    </small> */}  
+                    {/* {task?._links?.addChild && (
+                    <a
+                      href={`http://164.68.99.129${task._links.addChild.href.replace('/api/v3/projects', '/projects')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Project - {task._links.project?.title} 
+                    </a> 
+                    )}
+                    <br /> */}
+                    
+                     {task?._links?.addChild && (
+  <div style={{ marginBottom: '1rem' }}>
+    <div>
+      <a
+        href={`http://164.68.99.129${task._links.addChild.href.replace('/api/v3/projects', '/projects')}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Project - {task?._links.project?.title}
+      </a>
+    </div>
+    <div>
+      Task - {task?.subject || 'No task subject'}
+    </div>
+  </div>
+)}
+
+
+
+                     
+
                   </div>
                   {days.map((day, idx) => {
                     const [month, date] = day.split(' ');

@@ -1,7 +1,9 @@
+//backup 
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { getUsersList } from '../Services/userService';
-import { FaChevronLeft, FaChevronRight,FaCalendarDay } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight, FaCalendarDay } from 'react-icons/fa';
 import './styles.css';
 
 const UtilizationGrid = () => {
@@ -10,6 +12,7 @@ const UtilizationGrid = () => {
   const [tasksByUser, setTasksByUser] = useState({});
   const [days, setDays] = useState([]);
   const [selectedStartDate, setSelectedStartDate] = useState(new Date());
+  const [expandedProjectsByUser, setExpandedProjectsByUser] = useState({});
 
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 10;
@@ -34,7 +37,6 @@ const UtilizationGrid = () => {
   };
 
   useEffect(() => {
-    
     getUsersList()
       .then(setUsers)
       .catch(err => console.error('Error loading users:', err));
@@ -75,18 +77,21 @@ const UtilizationGrid = () => {
   const toggleExpand = async (user) => {
     const isExpanding = expandedUserId !== user.id;
     setExpandedUserId(isExpanding ? user.id : null);
-
-
-
     if (isExpanding && !tasksByUser[user.id]) {
       const tasks = await fetchTasksForUser(user.id);
       setTasksByUser(prev => ({ ...prev, [user.id]: tasks }));
     }
-  };  
+  };
 
-
-   
-
+  const toggleProjectExpand = (userId, projectId) => {
+    setExpandedProjectsByUser(prev => ({
+      ...prev,
+      [userId]: {
+        ...prev[userId],
+        [projectId]: !prev[userId]?.[projectId]
+      }
+    }));
+  };
 
   const getCellColor = (percent) => {
     if (percent >= 100) return '#4caf5073';
@@ -159,76 +164,33 @@ const UtilizationGrid = () => {
     return weekMap;
   };
 
-  // const calculateUtilization = (userId, day) => {
-  //   const tasks = tasksByUser[userId] || [];
-  //   const weekMap = mapTasksToWeeks(tasks);
-  //   const count = weekMap[day]?.length || 0;
-  //   const percent = Math.min((count / 3) * 100);
-  //   return Math.round(percent);
-  // };
-     
-const isOnLeaveForWeek = (tasks, weekStart, weekEnd) => {
-  return tasks.some(
-    t =>
-      t._links.type?.title === 'Annual Leave' &&               // the leave task
-      new Date(t.startDate || t.start) <= weekEnd &&    // overlaps the week
-      new Date(t.dueDate  || t.end)   >= weekStart
-  );
-};
+  const isOnLeaveForWeek = (tasks, weekStart, weekEnd) => {
+    return tasks.some(
+      t => t._links.type?.title === 'Annual Leave' &&
+        new Date(t.startDate || t.start) <= weekEnd &&
+        new Date(t.dueDate || t.end) >= weekStart
+    );
+  };
 
+  const WEEKLY_CAPACITY_HOURS = 40;
 
-// const WEEKLY_CAPACITY_HOURS = 40;
+  const calculateUtilization = (userId, day) => {
+    const tasks = tasksByUser[userId] || [];
+    const [month, date] = day.split(' ');
+    const weekStart = new Date(`${month} ${date}, ${new Date().getFullYear()}`);
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
 
-// const calculateUtilization = (userId, day) => {
-//   const tasks = tasksByUser[userId] || [];
-//   const [month, date] = day.split(' ');
-//   const weekStart = new Date(`${month} ${date}, ${new Date().getFullYear()}`);
-//   const weekEnd = new Date(weekStart);
-//   weekEnd.setDate(weekStart.getDate() + 6);
+    if (isOnLeaveForWeek(tasks, weekStart, weekEnd)) return 'LEAVE';
 
-//   let totalEffort = 0;
-//   tasks.forEach(task => {
-//     totalEffort += calculateEffortThisWeek(task, weekStart, weekEnd);
-//   });
+    let totalEffort = 0;
+    tasks.forEach(task => {
+      totalEffort += calculateEffortThisWeek(task, weekStart, weekEnd);
+    });
 
-//   const percent = Math.min((totalEffort / WEEKLY_CAPACITY_HOURS) * 100, 100);
-//   return Math.round(percent);
-// };   
+    return Math.round(Math.min((totalEffort / WEEKLY_CAPACITY_HOURS) * 100, 100));
+  };
 
-
-
-const WEEKLY_CAPACITY_HOURS = 40;  // or whatever you prefer
-
-const calculateUtilization = (userId, day) => {
-  const tasks = tasksByUser[userId] || [];
-
-  const [month, date] = day.split(' ');
-  const weekStart = new Date(`${month} ${date}, ${new Date().getFullYear()}`);
-  const weekEnd   = new Date(weekStart);
-  weekEnd.setDate(weekStart.getDate() + 6);
-
-  // ⬇️ NEW — leave check
-  if (isOnLeaveForWeek(tasks, weekStart, weekEnd)) return 'LEAVE';
-
-  let totalEffort = 0;
-  tasks.forEach(task => {
-    totalEffort += calculateEffortThisWeek(task, weekStart, weekEnd);
-  });
-
-  return Math.round(Math.min((totalEffort / WEEKLY_CAPACITY_HOURS) * 100, 100));
-};
-
-
-
-// leave functionality
-
-// utils – place near the other helpers
-
-
-
-
-  //pagination 
-  
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
@@ -241,12 +203,6 @@ const calculateUtilization = (userId, day) => {
   const prevPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
-
-  const currentPageNavigation = ()=>{
-
-    if(currentPage !== 0)
-      setCurrentPage(1) 
-  }
 
   const handleWeekNavigation = (direction) => {
     const newDate = new Date(selectedStartDate);
@@ -282,20 +238,20 @@ const calculateUtilization = (userId, day) => {
         </div>
       </div>
 
+
       <div className="grid-body">
         {currentUsers.map(user => {
           const isExpanded = expandedUserId === user.id;
           const tasks = tasksByUser[user.id] || [];
-          const weekMap = mapTasksToWeeks(tasks);
 
-          const taskRows = isExpanded
-            ? tasks.map(task => {
-              const taskWeeks = days.filter(day =>
-                weekMap[day]?.some(t => t.id === task.id)
-              );
-              return taskWeeks.length > 0 ? { task, taskWeeks } : null;
-            }).filter(Boolean)
-            : [];
+          const projects = Array.from(
+            tasks.reduce((map, task) => {
+              const project = task._links.project?.title || 'Unknown Project';
+              if (!map.has(project)) map.set(project, []);
+              map.get(project).push(task);
+              return map;
+            }, new Map())
+          );
 
           return (
             <React.Fragment key={user.id}>
@@ -335,64 +291,39 @@ const calculateUtilization = (userId, day) => {
                   );
                 })}
               </div>
+              {isExpanded && projects.map(([projectName, projectTasks]) => {
+                const isProjectExpanded = expandedProjectsByUser[user.id]?.[projectName] || false;
+                return (
+                  <React.Fragment key={projectName}>
+                    <div className="row task-row">
+                      <div className="employee-cell teamname task-cell">
+                        <button
+                          className="expand-btn"
+                          onClick={() => toggleProjectExpand(user.id, projectName)}
+                        >
+                          {isProjectExpanded ? '-' : '+'}
+                        </button>
+                        Project - {projectName}
+                      </div>
+                      {days.map((_, idx) => (
+                        <div key={idx} className="month-cell task-cell">&nbsp;</div>
+                      ))}
+                    </div>
 
-              {isExpanded && taskRows.map(({ task, taskWeeks }) => (
+                    {isProjectExpanded && projectTasks.map(task => (
+                      <div className="row task-row" key={task.id}>
+                        <div className="employee-cell teamname task-cell">
+                          Task - {task.subject || 'No task subject'}
+                        </div>
+                        {days.map((day, idx) => {
+                          const [month, date] = day.split(' ');
+                          const weekStart = new Date(`${month} ${date}, ${new Date().getFullYear()}`);
+                          const weekEnd = new Date(weekStart);
+                          weekEnd.setDate(weekStart.getDate() + 6);
+                          const effort = calculateEffortThisWeek(task, weekStart, weekEnd);
+                          //  leaves
 
-                
-                <div className="row task-row" key={task.id}> 
-                     
-                    
-                  <div className="employee-cell teamname task-cell"> 
-                
-                   {/* <small>
-                       <a href='http://164.68.99.129/projects/opentext-document-management-system-dms-implementation/work_packages' > Project - {task?._links?.project?.title }</a><br />
-                                
-                                
-                                
-                        Task - {task?.subject}
-                    </small> */}  
-                    {/* {task?._links?.addChild && (
-                    <a
-                      href={`http://164.68.99.129${task._links.addChild.href.replace('/api/v3/projects', '/projects')}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Project - {task._links.project?.title} 
-                    </a> 
-                    )}
-                    <br /> */}
-                    
-                     {task?._links?.addChild && (
-  <div style={{ marginBottom: '1rem' }}>
-    <div>
-      <a
-        href={`http://164.68.99.129${task._links.addChild.href.replace('/api/v3/projects', '/projects')}`}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Project - {task?._links.project?.title}
-      </a>
-    </div>
-    <div>
-      Task - {task?.subject || 'No task subject'}
-    </div>
-  </div>
-)}
-
-
-
-                     
-
-                  </div>
-                  {days.map((day, idx) => {
-                    const [month, date] = day.split(' ');
-                    const weekStart = new Date(`${month} ${date}, ${new Date().getFullYear()}`);
-                    const weekEnd = new Date(weekStart);
-                    weekEnd.setDate(weekStart.getDate() + 6);
-
-                    const effort = calculateEffortThisWeek(task, weekStart, weekEnd);
-
-                    const utilization= calculateUtilization(user.id, day);
+                           const utilization= calculateUtilization(user.id, day);
                       
                     if (utilization === 'LEAVE') {
                              return (
@@ -403,26 +334,30 @@ const calculateUtilization = (userId, day) => {
                        >
                            &nbsp;--
                          </div>
-                          )                 ;
+                          );
                         }  
                         
-                      return (
-                      <div
-                        key={idx}
-                        className="month-cell task-cell"
-                        style={{ backgroundColor: effort > 0 ? '#e0f7fa' : 'transparent' }}
-                      >
-                        {effort > 0 && <span className="effort-text">{effort}h</span>}
+
+                          return (
+                            <div
+                              key={idx}
+                              className="month-cell task-cell"
+                              style={{ backgroundColor: effort > 0 ? '#e0f7fa' : 'transparent' }}
+                            >
+                              {effort > 0 && <span className="effort-text">{effort}h</span>}
+                            </div>
+                          );
+                        })}
                       </div>
-                    );
-                  })}
-                </div>
-              ))}
+                    ))}
+                  </React.Fragment>
+                );
+              })}
             </React.Fragment>
           );
         })}
-      </div>
-
+      </div> 
+      {/*  */}
       <div className="pagination-controls">
         <button className="pagbtn" onClick={prevPage} disabled={currentPage === 1}>Previous</button>
         <span style={{ margin: '0 10px' }}>Page {currentPage} of {totalPages}</span>
@@ -430,7 +365,12 @@ const calculateUtilization = (userId, day) => {
         <button className="pagbtn" onClick={nextPage} disabled={currentPage === totalPages}>Next</button>
         
       </div>
+
+      {/*  */}
     </div>
+
+    
+   
   );
 };
 

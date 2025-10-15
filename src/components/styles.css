@@ -65,19 +65,25 @@ button.pagbtn {
 /* Team members header cell */
 .employee-cell {
   width: 300px;
-  min-width: 140px;
+  min-width: 160px;
   padding: 10px 12px;
   font-weight: 700;
   border: 1px solid #fcf9f9;
   background: #f8f9fa;
   flex-shrink: 0;
-  white-space: nowrap;
+  /* white-space: nowrap; */
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+   max-width: 250px; 
+
   box-sizing: border-box;
   color: #222;
   user-select: none;
   height:60px;
-
-
+  /*  */
+  overflow-y: auto;
+ 
 }
 
 .employee-cell.teamname {
@@ -645,4 +651,35 @@ button.navbtn span {
     align-items: flex-start;
     gap: 8px;
   }
+}
+
+/* loader bar css  */
+.loader-bar {
+  width: 100%;
+  height: 4px;
+  background-color: #ddd;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.loader-bar .bar {
+  width: 40%;
+  height: 100%;
+  background-color: #0a738e;
+  position: absolute;
+  animation: loading 1s infinite linear;
+}
+
+@keyframes loading {
+  0% { left: -40%; }
+  50% { left: 100%; }
+  100% { left: -40%; }
+}
+
+.leave-cell {
+  background-color: #ffe7b8;
+  color: #9b5e00;
+  font-weight: 600;
+  text-align: center;
 }

@@ -1,0 +1,148 @@
+/* ---------- Dashboard Container ---------- */
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ---------- Stats Grid ---------- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+}
+
+/* ---------- Cards ---------- */
+.card {
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Card Types */
+.stat-card.default { border-left: 4px solid #1a67a3; }
+.stat-card.success { border-left: 4px solid #1f883d; }
+.stat-card.warning { border-left: 4px solid #da9319; }
+.stat-card.danger { border-left: 4px solid 	#a31a67; }
+
+/* Stat Values */
+.stat-value {
+  font-size: 22px;
+  font-weight: 600;
+  margin-top: 5px;
+}
+
+/* ---------- Graph Widget ---------- */
+.graph-widget {
+  margin-bottom: 20px;
+}
+
+/* ---------- Progress Bars ---------- */
+.progress-bar {
+  background: #e5e7eb;
+  border-radius: 6px;
+  height: 20px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+    text-align: left;
+    padding-left: 15px;
+    line-height: 20px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    transition: width 0.3s ease;
+}
+span.status {
+    padding: 5px;
+    font-size: 14px;
+    color: #fff;
+    border-radius: 5px;
+}
+/* Status Colors */
+.status-red { background: #a31a67; }
+.status-green { background: #1f883d; }
+.status-yellow { background: #da9319; }
+
+/* ---------- Employee Table ---------- */
+.table-card table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-card th,
+.table-card td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.table-card h3 {
+  margin-bottom: 12px;
+}
+
+/* View Icon */
+.view-icon {
+  cursor: pointer;
+    font-size: 16px;
+    color: #6e7175;
+    padding-left: 10px;
+}
+
+.view-icon:hover {
+  color: #0056b3;
+}
+
+/* Details Link */
+.details-link {
+ color: #1f883d;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: underline;
+}
+
+.details-link:hover {
+  text-decoration: underline;
+}
+
+/* Employee Header (table title + link) */
+.employee-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+/* ---------- Responsive Adjustments ---------- */
+@media (max-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .table-card table,
+  .graph-widget {
+    font-size: 14px;
+  }
+
+  .progress-fill {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .graph-widget {
+    height: 200px;
+  }
+
+  .employee-header h3 {
+    font-size: 16px;
+  }
+}

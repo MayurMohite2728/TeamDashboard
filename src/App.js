@@ -1,19 +1,46 @@
-import React from 'react';
-import UtilizationGrid from './components/UtilizationGrid';
-import './App.css'; // Make sure this file exists and includes the styles below
-
-const weekHeaders = [];
-
-const sampleData = [];
+import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Sidebar from "./components/Sidebar";
+import Header from "./components/Header";
+import Dashboard from "./components/Dashboard";
+import UtilizationGrid from "./components/UtilizationGrid";
+import "./App.css";
 
 function App() {
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
   return (
-    <div className="app-container">
-      <h2 className="dashboard-title">Team Weekly Utilization Dashboard</h2>
-      <div className="grid-wrapper">
-        <UtilizationGrid data={sampleData} weeks={weekHeaders} />
+    <Router>
+      <div className="layout">
+        <Sidebar
+          collapsed={sidebarCollapsed}
+          mobileOpen={mobileSidebarOpen}
+          onCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+          onMobileToggle={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+        />
+
+        <div className="main-content">
+          <Header
+            sidebarCollapsed={sidebarCollapsed}
+            onMobileToggle={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+          />
+          <div className="page">
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/utilization" element={<UtilizationGrid />} />
+            </Routes>
+          </div>
+        </div>
+
+        {mobileSidebarOpen && (
+          <div
+            className="overlay"
+            onClick={() => setMobileSidebarOpen(false)}
+          ></div>
+        )}
       </div>
-    </div>
+    </Router>
   );
 }
 

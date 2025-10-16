@@ -3,7 +3,7 @@ import axios from "axios";
 import { getUsersList } from "../Services/userService";
 import { FaChevronLeft, FaChevronRight, FaCalendarDay } from "react-icons/fa";
 import "./styles.css";
-
+ 
 const UtilizationGrid = () => {
   const [users, setUsers] = useState([]);
   const [expandedUserId, setExpandedUserId] = useState(null);
@@ -15,21 +15,21 @@ const UtilizationGrid = () => {
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const usersPerPage = 10;
-
+ 
   const API_KEY = "apikey";
   const PASSWORD =
     "0b78127b3361cb3c7186fdc1b23bc152f905108d70a6c3e65761a86117557a5a";
   const authHeader = "Basic " + btoa(`${API_KEY}:${PASSWORD}`);
-
+ 
   useEffect(() => {
     generateWeekStartDates(selectedStartDate);
   }, [selectedStartDate]);
-
+ 
   const generateWeekStartDates = (startDate) => {
     const startOfWeek = new Date(startDate);
     startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
     startOfWeek.setHours(0, 0, 0, 0);
-
+ 
     const weeks = [];
     for (let i = -3; i <= 6; i++) {
       const weekStart = new Date(startOfWeek);
@@ -39,7 +39,7 @@ const UtilizationGrid = () => {
     }
     setDays(weeks);
   };
-
+ 
   useEffect(() => {
     setLoading(true);
     getUsersList()
@@ -47,19 +47,19 @@ const UtilizationGrid = () => {
       .catch((err) => console.error("Error loading users:", err))
       .finally(() => setLoading(false));
   }, []);
-
+ 
   const fetchTasksForUser = async (userId, visibleWeeks) => {
     setLoading(true);
     const url = `/api/v3/work_packages?filters=[{"assignee":{"operator":"=","values":["${userId}"]}}]`;
-
+ 
     try {
       const res = await axios.get(url, {
         headers: { Authorization: authHeader },
       });
       const allTasks = res.data._embedded?.elements || [];
-
+ 
       if (!visibleWeeks?.length) return allTasks;
-
+ 
       const firstWeekStart = new Date(
         `${visibleWeeks[0]}, ${new Date().getFullYear()}`
       );
@@ -67,7 +67,7 @@ const UtilizationGrid = () => {
         `${visibleWeeks[visibleWeeks.length - 1]}, ${new Date().getFullYear()}`
       );
       lastWeekEnd.setDate(lastWeekEnd.getDate() + 6);
-
+ 
       return allTasks.filter((task) => {
         const startDate = new Date(task.startDate || task.start);
         const endDate = new Date(task.dueDate || task.end);
@@ -80,22 +80,22 @@ const UtilizationGrid = () => {
       setLoading(false);
     }
   };
-
+ 
   useEffect(() => {
     const fetchTasksForVisibleUsers = async () => {
       const indexOfLastUser = currentPage * usersPerPage;
       const indexOfFirstUser = indexOfLastUser - usersPerPage;
       const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
-
+ 
       for (const user of currentUsers) {
         const tasks = await fetchTasksForUser(user.id, days);
         setTasksByUser((prev) => ({ ...prev, [user.id]: tasks }));
       }
     };
-
+ 
     if (users.length) fetchTasksForVisibleUsers();
   }, [users, currentPage, days]);
-
+ 
   const toggleExpand = async (user) => {
     const isExpanding = expandedUserId !== user.id;
     setExpandedUserId(isExpanding ? user.id : null);
@@ -104,7 +104,7 @@ const UtilizationGrid = () => {
       setTasksByUser((prev) => ({ ...prev, [user.id]: tasks }));
     }
   };
-
+ 
   const toggleProjectExpand = (userId, projectId) => {
     setExpandedProjectsByUser((prev) => ({
       ...prev,
@@ -114,14 +114,14 @@ const UtilizationGrid = () => {
       },
     }));
   };
-
+ 
   const getCellColor = (percent) => {
     if (percent >= 100) return "#4caf5073";
     if (percent >= 50) return "#79bcf578";
     if (percent >= 10) return "#ffeb3b66";
-    return "#ea57956b";
+    return "#f1f1f1";
   };
-
+ 
   const getWorkingDays = (start, end) => {
     let count = 0;
     const current = new Date(start);
@@ -132,7 +132,7 @@ const UtilizationGrid = () => {
     }
     return count;
   };
-
+ 
   const parseISO8601DurationToHours = (duration) => {
     const match = duration?.match(/P(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?)?/);
     if (!match) return 0;
@@ -141,7 +141,7 @@ const UtilizationGrid = () => {
     const minutes = parseInt(match[3]) || 0;
     return days * 8 + hours + minutes / 60;
   };
-
+ 
   const calculateEffortThisWeek = (task, weekStart, weekEnd) => {
     const startDate = new Date(task.startDate || task.start);
     const endDate = new Date(task.dueDate || task.end);
@@ -149,20 +149,20 @@ const UtilizationGrid = () => {
       typeof task.estimatedTime === "string"
         ? parseISO8601DurationToHours(task.estimatedTime)
         : task.estimatedTime || 0;
-
+ 
     if (startDate > weekEnd || endDate < weekStart || !estimatedHours) return 0;
-
+ 
     const totalWorkingDays = getWorkingDays(startDate, endDate);
     if (totalWorkingDays === 0) return 0;
-
+ 
     const overlapStart = new Date(Math.max(startDate, weekStart));
     const overlapEnd = new Date(Math.min(endDate, weekEnd));
     const overlapDays = getWorkingDays(overlapStart, overlapEnd);
-
+ 
     const effort = ((estimatedHours / totalWorkingDays) * overlapDays).toFixed(1);
     return parseFloat(effort);
   };
-
+ 
   const isOnLeaveForWeek = (tasks, weekStart, weekEnd) => {
     return tasks.some(
       (t) =>
@@ -172,44 +172,44 @@ const UtilizationGrid = () => {
         new Date(t.dueDate || t.end) >= weekStart
     );
   };
-
+ 
   const WEEKLY_CAPACITY_HOURS = 40;
-
+ 
   const calculateUtilization = (tasks, weekStart, weekEnd) => {
     if (isOnLeaveForWeek(tasks, weekStart, weekEnd)) return "LEAVE";
-
+ 
     let totalEffort = 0;
     tasks.forEach((task) => {
       totalEffort += calculateEffortThisWeek(task, weekStart, weekEnd);
     });
-
+ 
     return Math.round(Math.min((totalEffort / WEEKLY_CAPACITY_HOURS) * 100));
   };
-
+ 
   // Pagination + search
   const filteredUsers = users.filter((user) =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
+ 
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const displayedUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
-
+ 
   const nextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
-
+ 
   const prevPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
-
+ 
   const handleWeekNavigation = (direction) => {
     const newDate = new Date(selectedStartDate);
     newDate.setDate(newDate.getDate() + direction * 7);
     setSelectedStartDate(newDate);
   };
-
+ 
   return (
     <div className="util-grid">
       {loading && (
@@ -217,7 +217,7 @@ const UtilizationGrid = () => {
           <div className="bar"></div>
         </div>
       )}
-
+ 
       <div className="week-filter">
         <input
           type="text"
@@ -234,21 +234,21 @@ const UtilizationGrid = () => {
             border: "1px solid #ccc"
           }}
         />
-
+ 
         <button className="navbtn" onClick={() => handleWeekNavigation(-1)}>
           <FaChevronLeft style={{ marginRight: 6, color: "#0a738e" }} /> Previous Weeks
         </button>
-
+ 
         <button className="navbtn" onClick={() => setSelectedStartDate(new Date())}>
           <FaCalendarDay style={{ marginRight: 6, color: "#0a738e" }} />
           Current Week
         </button>
-
+ 
         <button className="navbtn" onClick={() => handleWeekNavigation(1)}>
           Next Weeks <FaChevronRight style={{ marginRight: 6, color: "#0a738e" }} />
         </button>
       </div>
-
+ 
       <div className="grid-header">
         <div className="header-row">
           <div className="employee-cell teammember">Team Member</div>
@@ -259,24 +259,24 @@ const UtilizationGrid = () => {
           ))}
         </div>
       </div>
-
+ 
       <div className="grid-body">
         {displayedUsers.map((user) => {
           const isExpanded = expandedUserId === user.id;
           const tasks = tasksByUser[user.id] || [];
-
+ 
           const [visibleStart, visibleEnd] = [
             new Date(`${days[0]}, ${new Date().getFullYear()}`),
             new Date(`${days[days.length - 1]}, ${new Date().getFullYear()}`),
           ];
           visibleEnd.setDate(visibleEnd.getDate() + 6);
-
+ 
           const validTasks = tasks.filter((t) => {
             const s = new Date(t.startDate || t.start);
             const e = new Date(t.dueDate || t.end);
             return s <= visibleEnd && e >= visibleStart;
           });
-
+ 
           const projects = Array.from(
             validTasks.reduce((map, task) => {
               const project = task._links?.project?.title || "Unknown Project";
@@ -285,7 +285,7 @@ const UtilizationGrid = () => {
               return map;
             }, new Map())
           );
-
+ 
           return (
             <React.Fragment key={user.id}>
               {/* User row */}
@@ -301,16 +301,16 @@ const UtilizationGrid = () => {
                   const weekStart = new Date(`${month} ${date}, ${new Date().getFullYear()}`);
                   const weekEnd = new Date(weekStart);
                   weekEnd.setDate(weekStart.getDate() + 6);
-
+ 
                   const utilization = calculateUtilization(tasks, weekStart, weekEnd);
-
+ 
                   if (utilization === "LEAVE") {
                     return (
                       <div
                         key={idx}
                         className="month-cell"
                         style={{
-                          backgroundColor: "#ff6b6b",
+                          backgroundColor: "#f1f1f1",
                           color: "#fff",
                           fontWeight: 600,
                         }}
@@ -319,7 +319,7 @@ const UtilizationGrid = () => {
                       </div>
                     );
                   }
-
+ 
                   return (
                     <div
                       key={idx}
@@ -331,13 +331,13 @@ const UtilizationGrid = () => {
                   );
                 })}
               </div>
-
+ 
               {/* Project rows */}
               {isExpanded &&
                 projects.map(([projectName, projectTasks]) => {
                   const isProjectExpanded =
                     expandedProjectsByUser[user.id]?.[projectName] || false;
-
+ 
                   return (
                     <React.Fragment key={projectName}>
                       <div className="row task-row">
@@ -350,15 +350,15 @@ const UtilizationGrid = () => {
                           </button>
                           Project - {projectName}
                         </div>
-
+ 
                         {days.map((day, idx) => {
                           const [month, date] = day.split(" ");
                           const weekStart = new Date(`${month} ${date}, ${new Date().getFullYear()}`);
                           const weekEnd = new Date(weekStart);
                           weekEnd.setDate(weekStart.getDate() + 6);
-
+ 
                           const utilization = calculateUtilization(projectTasks, weekStart, weekEnd);
-
+ 
                           return (
                             <div
                               key={idx}
@@ -370,7 +370,7 @@ const UtilizationGrid = () => {
                           );
                         })}
                       </div>
-
+ 
                       {isProjectExpanded &&
                         projectTasks.map((task) => (
                           <div className="row task-row" key={task.id}>
@@ -382,7 +382,7 @@ const UtilizationGrid = () => {
                               const weekStart = new Date(`${month} ${date}, ${new Date().getFullYear()}`);
                               const weekEnd = new Date(weekStart);
                               weekEnd.setDate(weekStart.getDate() + 6);
-
+ 
                               const effort = calculateEffortThisWeek(task, weekStart, weekEnd);
                               return (
                                 <div
@@ -405,7 +405,7 @@ const UtilizationGrid = () => {
           );
         })}
       </div>
-
+ 
       <div className="pagination-controls">
         <button className="pagbtn" onClick={prevPage} disabled={currentPage === 1}>
           Previous
@@ -420,5 +420,5 @@ const UtilizationGrid = () => {
     </div>
   );
 };
-
+ 
 export default UtilizationGrid;

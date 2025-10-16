@@ -1,29 +1,3 @@
-/* ---------- Layout ---------- */
-.layout {
-  display: flex;
-  height: 100vh;
-  font-family: "Open Sans", sans-serif;
-  font-family: "Arial", "Open Sans", sans-serif;
-}
-
-/* Main content (right of sidebar) */
-.main-content {
-  flex-grow: 1;
-  margin-left: 220px; /* sidebar width */
-  background: #f9fafb;
-  overflow-y: auto;
-  transition: margin-left 0.3s ease;
-}
-
-.sidebar.collapsed + .main-content {
-  margin-left: 70px;
-}
-
-.page {
-  padding: 20px;
-}
-
-/* ---------- Sidebar ---------- */
 .sidebar {
   background: #1f2937;
   color: white;
@@ -51,11 +25,10 @@
 .menu-toggle {
   cursor: pointer;
   font-size: 20px;
-  padding-left: 10px;
 }
 
 .logo {
-  margin-right: 70px;
+  margin-left: 10px;
   font-size: 18px;
   font-weight: bold;
 }
@@ -86,14 +59,11 @@
 .menu li span {
   margin-left: 10px;
   font-size: 14px;
-  color: #fff;
 }
 
 .logout {
   margin-top: auto;
   background: #ef4444;
-  cursor: pointer;
-  padding: 12px 20px;
 }
 
 .logout:hover {
@@ -109,31 +79,69 @@
   height: 100%;
   background: rgba(0,0,0,0.5);
   z-index: 100;
-  display: none;
+}
+.menu li svg {
+    color: #fff;
+}
+.menu a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #ccc;
+  text-decoration: none;
+  padding: 10px;
+  border-radius: 6px;
+  transition: background 0.2s;
+  width: 150px;
 }
 
-/* Show overlay when sidebar is open on mobile */
-.sidebar.open + .main-content .overlay {
-  display: block;
+.menu a:hover {
+  background-color: #444;
+  color: #fff;
 }
 
-/* ---------- Mobile adjustments ---------- */
+.menu a.active {
+  background-color: #1a67a3;
+  color: white;
+}
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-logo {
+  width: 120px;
+  height: auto;
+}
+
+.logo-collapsed {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sidebar-logo-sm {
+  width: 40px;
+  height: auto;
+}
+
+/* Mobile */
 @media (max-width: 1024px) {
   .sidebar {
     transform: translateX(-100%);
-    position: fixed;
-    z-index: 200;
   }
-
   .sidebar.open {
     transform: translateX(0);
   }
-
   .sidebar.collapsed {
-    width: 220px; /* no collapse on mobile */
-  }
-
-  .main-content {
-    margin-left: 0;
+    width: 220px;
   }
 }

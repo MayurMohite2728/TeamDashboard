@@ -1,10 +1,14 @@
 /* UtilizationGrid.css */
-
+body {
+  font-family: 'Inter', 'Open Sans', 'Roboto', sans-serif;
+  background-color: #f8f9fc; /* light background for a clean dashboard look */
+  color: #333;
+}
 /* Container scroll */
 .util-grid {
   width: 100%;   
     margin: 0 auto;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+   
     padding: 15px;
     box-sizing: border-box;
     color: #333;
@@ -28,7 +32,7 @@
 }
 .week-filter {
    display: flex;
-    justify-content: flex-end;
+   justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     margin-bottom: 12px;
@@ -39,7 +43,9 @@ button.navbtn {
   align-items: center;
   padding: 8px 14px;
   border-radius: 8px;
-  background-color: #f8f8f8;
+ background-color: #fff;
+    border-color: #0663ac;
+    border: 1px solid #1a67a3;
   font-weight: 600;
   font-size: 12px;
   cursor: pointer;
@@ -92,6 +98,7 @@ button.pagbtn {
     border: none;
     font-weight: 500;
     display: flex;
+    font-size: 14px;
 }
 
 /* Months header container */
@@ -378,7 +385,7 @@ span.legend-item {
     align-items: center;
     gap: 4px;
     font-size: 12px;
-    padding: 7px 8px;
+    padding: 12px 8px;
     border-radius: 3px;
     margin-left: 10px;
     font-weight: 700;
@@ -388,7 +395,7 @@ span.legend-item {
 /* App.css */
 
 .app-container {
-  padding: 10px;
+  padding: 0px 10px 10px 10px;
   max-width: 100%;
   box-sizing: border-box;
 }
@@ -437,28 +444,20 @@ span.legend-item {
 /* Week navigation and legend */
 
 
-.navbtn {
-  cursor: pointer;
+.navbtn { 
   padding: 8px 14px;
-  background-color: #0a738e;
   border: none;
-  color: white;
+  color: #1a67a3;
   border-radius: 4px;
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: 6px;
+  font-size: 22px;
   transition: background-color 0.3s ease;
 }
-
-.navbtn:hover {
-  background-color: #065a6e;
-}
-.navbtn:hover span {
-    color: #fff;
-}
-.navbtn:hover svg {
-    fill: #fff;
+button.navbtn svg {
+    color: #1a67a3 !important;
 }
 .legend {
   display: flex;
@@ -475,8 +474,7 @@ span.legend-item {
   user-select: none;
 }
 button.navbtn span {
-  color: #000;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #277590;   
     font-size: 14px;
 }
 /* Grid header and body have horizontal scroll on smaller widths */
@@ -551,7 +549,6 @@ button.navbtn span {
   border-left: 1px solid #b2dfdb;
   min-height: 30px;
   display: flex;
-  justify-content: center;
   align-items: center;
   font-weight: 600;
   user-select: none;
@@ -595,7 +592,49 @@ button.navbtn span {
   background-color: #ccc;
   cursor: not-allowed;
 }
+/* Base style for select filter */
+select.navbtn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #0a738e;
+  background-color: #fff;
+  color: #0a738e;
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+}
 
+/* Hover effect like nav buttons */
+select.navbtn:hover {
+  background-color: #0a738e;
+  color: #fff;
+  border-color: #0a738e;
+}
+
+/* Remove default arrow and style a custom one */
+select.navbtn {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 320 512'%3e%3cpath fill='%230a738e' d='M31.3 192h257.4c28.4 0 42.8 34.5 22.6 54.6L182.6 374.6c-12.5 12.5-32.8 12.5-45.3 0L8.7 246.6C-11.4 226.5 3 192 31.3 192z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+  padding-right: 30px; /* space for arrow */
+  width: 120px;
+}
+
+/* When focused */
+select.navbtn:focus {
+  box-shadow: 0 0 0 2px rgba(10, 115, 142, 0.4);
+  border-color: #0a738e;
+}
+
+button svg {
+    color: #ffff !important;
+}
 /* Responsive adjustments */
 @media (max-width: 1200px) {
   .util-grid {
@@ -653,7 +692,7 @@ button.navbtn span {
   }
 }
 
-/* loader bar css  */
+
 .loader-bar {
   width: 100%;
   height: 4px;
@@ -662,7 +701,7 @@ button.navbtn span {
   overflow: hidden;
   margin-bottom: 8px;
 }
-
+ 
 .loader-bar .bar {
   width: 40%;
   height: 100%;
@@ -670,16 +709,20 @@ button.navbtn span {
   position: absolute;
   animation: loading 1s infinite linear;
 }
-
+ 
 @keyframes loading {
   0% { left: -40%; }
   50% { left: 100%; }
   100% { left: -40%; }
 }
-
+ 
 .leave-cell {
   background-color: #ffe7b8;
   color: #9b5e00;
   font-weight: 600;
   text-align: center;
+}
+
+.card h3 {
+    font-size: 1rem;
 }

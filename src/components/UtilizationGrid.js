@@ -17,8 +17,7 @@ const UtilizationGrid = () => {
   const usersPerPage = 10;
 
   const API_KEY = "apikey";
-  const PASSWORD =
-    "0b78127b3361cb3c7186fdc1b23bc152f905108d70a6c3e65761a86117557a5a";
+  const PASSWORD ="a8aaace68a649dc60b395684b18fa4a313e838bff8e62fb77fcb28a86e2ec4c7";
   const authHeader = "Basic " + btoa(`${API_KEY}:${PASSWORD}`);
 
   useEffect(() => {
@@ -31,7 +30,7 @@ const UtilizationGrid = () => {
     startOfWeek.setHours(0, 0, 0, 0);
 
     const weeks = [];
-    for (let i = -3; i <= 6; i++) {
+    for (let i = -4; i <= 6; i++) {
       const weekStart = new Date(startOfWeek);
       weekStart.setDate(startOfWeek.getDate() + i * 7);
       const options = { month: "short", day: "numeric" };
@@ -51,14 +50,14 @@ const UtilizationGrid = () => {
   // ✅ Updated function with dynamic pageSize and pagination
   const fetchTasksForUser = async (userId, visibleWeeks) => {
     setLoading(true);
-    const baseUrl = `/api/v3/work_packages`;
+    const baseUrl = `https://vmi2493325.contaboserver.net/api/v3/work_packages`;
     const filters = `[{"assignee":{"operator":"=","values":["${userId}"]}}]`;
 
     let allTasks = [];
     let offset = 1;
     const pageSize = 100; // Initial page size (can be adjusted)
     let total = 0;
-
+    
     try {
       while (true) {
         const url = `${baseUrl}?filters=${encodeURIComponent(
@@ -146,7 +145,7 @@ const UtilizationGrid = () => {
     const current = new Date(start);
     while (current <= end) {
       const day = current.getDay();
-      if (day !== 0 && day !== 6) count++;
+      if (day !== 5 && day !== 6) count++;
       current.setDate(current.getDate() + 1);
     }
     return count;
@@ -158,7 +157,7 @@ const UtilizationGrid = () => {
     const days = parseInt(match[1]) || 0;
     const hours = parseInt(match[2]) || 0;
     const minutes = parseInt(match[3]) || 0;
-    return days * 8 + hours + minutes / 60;
+    return days * 8 + hours + (minutes / 60);
   };
 
   const calculateEffortThisWeek = (task, weekStart, weekEnd) => {
@@ -177,10 +176,10 @@ const UtilizationGrid = () => {
     const overlapStart = new Date(Math.max(startDate, weekStart));
     const overlapEnd = new Date(Math.min(endDate, weekEnd));
     const overlapDays = getWorkingDays(overlapStart, overlapEnd);
-
+     
+    
     const effort = (
-      (estimatedHours / totalWorkingDays) *
-      overlapDays
+      (estimatedHours / totalWorkingDays) * overlapDays  
     ).toFixed(1);
     return parseFloat(effort);
   };
@@ -199,7 +198,7 @@ const UtilizationGrid = () => {
 
   const calculateUtilization = (tasks, weekStart, weekEnd) => {
     if (isOnLeaveForWeek(tasks, weekStart, weekEnd)) return "LEAVE";
-
+    
     let totalEffort = 0;
     tasks.forEach((task) => {
       totalEffort += calculateEffortThisWeek(task, weekStart, weekEnd);
@@ -207,6 +206,11 @@ const UtilizationGrid = () => {
 
     return Math.round(Math.min((totalEffort / WEEKLY_CAPACITY_HOURS) * 100));
   };
+
+
+
+
+
 
   // Pagination + search
   const filteredUsers = users.filter((user) =>

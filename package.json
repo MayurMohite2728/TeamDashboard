@@ -2,7 +2,7 @@
   "name": "team-utilization-dashboard",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://164.68.99.129",
+  "proxy": "https://vmi2493325.contaboserver.net",
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",

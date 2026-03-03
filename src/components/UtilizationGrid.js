@@ -164,9 +164,9 @@ const UtilizationGrid = () => {
     const startDate = new Date(task.startDate || task.start);
     const endDate = new Date(task.dueDate || task.end);
     const estimatedHours =
-      typeof task.estimatedTime === "string"
-        ? parseISO8601DurationToHours(task.estimatedTime)
-        : task.estimatedTime || 0;
+      typeof task.spentTime === "string"
+        ? parseISO8601DurationToHours(task.spentTime)
+        : task.spentTime || 0;
 
     if (startDate > weekEnd || endDate < weekStart || !estimatedHours) return 0;
 
